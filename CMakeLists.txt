@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(astrodynamics-lib main.cpp)
 
+target_include_directories(astrodynamics-lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/modules)
+
 include(GNUInstallDirs)
 install(TARGETS astrodynamics-lib
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
