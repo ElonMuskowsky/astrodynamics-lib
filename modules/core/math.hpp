@@ -8,11 +8,6 @@ namespace astrodynamics_lib {
 struct Vec3 { double x, y, z; };
 struct Mat3 { double m[3][3]; };
 
-struct CartState {
-    Vec3 pos;  // position [km]
-    Vec3 vel;  // velocity [km/s]
-};
-
 // --- Vec3 operators ---
 
 inline Vec3 operator+(Vec3 a, Vec3 b)   { return {a.x+b.x, a.y+b.y, a.z+b.z}; }
