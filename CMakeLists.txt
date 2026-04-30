@@ -6,10 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(modules/core)
+add_subdirectory(modules/orbital)
 
 add_executable(astrodynamics-lib main.cpp)
 
-target_link_libraries(astrodynamics-lib PRIVATE core)
+target_link_libraries(astrodynamics-lib PRIVATE core orbital)
 
 include(GNUInstallDirs)
 install(TARGETS astrodynamics-lib
