@@ -1,5 +1,7 @@
 find_package(Qt6 REQUIRED COMPONENTS Test)
 
+set(CMAKE_AUTOMOC ON)
+
 qt_add_executable(tst_kepl_cart tst_kepl_cart.cpp)
 
 target_link_libraries(tst_kepl_cart PRIVATE Qt6::Test orbital)
