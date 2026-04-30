@@ -71,10 +71,10 @@ void TstKeplCart::coe2rv_reference_sun_sync_elliptic()
 {
     // Reference values provided externally.
     // Sun-synchronous near-circular orbit: sma=6872.526 km, ecc=0.00135,
-    // inc=97.455 deg, raan=69.1 deg, aop=330 deg, ta=290 deg
+    // inc=97.455 deg, raan=330 deg, aop=69.1 deg, ta=290 deg
     KeplElems e{6872.526, 0.00135,
-                97.455 * deg_to_rad, 69.1  * deg_to_rad,
-                330.0  * deg_to_rad, 290.0 * deg_to_rad};
+                97.455 * deg_to_rad, 330.0 * deg_to_rad,
+                69.1   * deg_to_rad, 290.0 * deg_to_rad};
 
     CartState s = coe2rv(e);
 
@@ -182,11 +182,11 @@ void TstKeplCart::rv2coe_reference_sun_sync_elliptic()
 
     KeplElems e = rv2coe(pos, vel);
 
-    VERIFY_NEAR(e.sma,  6872.526,            POS_TOL);
+    VERIFY_NEAR(e.sma,  6872.526,             POS_TOL);
     VERIFY_NEAR(e.ecc,  0.00135,             1e-7);
     VERIFY_NEAR(e.inc,  97.455 * deg_to_rad, ANG_TOL);
-    VERIFY_NEAR(e.raan,  69.1  * deg_to_rad, ANG_TOL);
-    VERIFY_NEAR(e.aop,  330.0  * deg_to_rad, ANG_TOL);
+    VERIFY_NEAR(e.aop,   69.1  * deg_to_rad, ANG_TOL);  // aop=69.1 deg
+    VERIFY_NEAR(e.raan, 330.0  * deg_to_rad, ANG_TOL);  // raan=330 deg
     VERIFY_NEAR(e.ta,   290.0  * deg_to_rad, ANG_TOL);
 }
 

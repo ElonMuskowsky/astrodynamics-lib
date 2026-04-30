@@ -14,8 +14,8 @@ struct KeplElems {
     double sma;   // semi-major axis [km]
     double ecc;   // eccentricity [-]
     double inc;   // inclination [rad]
-    double aop;   // argument of perigee [rad]
     double raan;  // right ascension of the ascending node [rad]
+    double aop;   // argument of perigee [rad]
     double ta;    // true anomaly [rad]
 };
 
