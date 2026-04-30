@@ -185,8 +185,8 @@ void TstKeplCart::rv2coe_reference_sun_sync_elliptic()
     VERIFY_NEAR(e.sma,  6872.526,             POS_TOL);
     VERIFY_NEAR(e.ecc,  0.00135,             1e-7);
     VERIFY_NEAR(e.inc,  97.455 * deg_to_rad, ANG_TOL);
-    VERIFY_NEAR(e.aop,   69.1  * deg_to_rad, ANG_TOL);  // aop=69.1 deg
-    VERIFY_NEAR(e.raan, 330.0  * deg_to_rad, ANG_TOL);  // raan=330 deg
+    VERIFY_NEAR(e.raan, 330.0  * deg_to_rad, ANG_TOL);
+    VERIFY_NEAR(e.aop,   69.1  * deg_to_rad, ANG_TOL);
     VERIFY_NEAR(e.ta,   290.0  * deg_to_rad, ANG_TOL);
 }
 
