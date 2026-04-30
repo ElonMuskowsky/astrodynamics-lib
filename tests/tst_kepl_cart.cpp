@@ -24,12 +24,14 @@ class TstKeplCart : public QObject
 private slots:
     // --- coe2rv ---
     void coe2rv_reference_circular_inclined();
+    void coe2rv_reference_sun_sync_elliptic();
     void coe2rv_circular_equatorial_invariants();
     void coe2rv_circular_polar_invariants();
     void coe2rv_highly_elliptic_invariants();
 
     // --- rv2coe ---
     void rv2coe_reference_circular_inclined();
+    void rv2coe_reference_sun_sync_elliptic();
     void rv2coe_circular_equatorial();
 
     // --- round-trips ---
@@ -63,6 +65,25 @@ void TstKeplCart::coe2rv_reference_circular_inclined()
     VERIFY_NEAR(s.vel.x, 0.0,                   VEL_TOL);
     VERIFY_NEAR(s.vel.y, 6.7895302977176506,    VEL_TOL);
     VERIFY_NEAR(s.vel.z, 3.6864141730136519,    VEL_TOL);
+}
+
+void TstKeplCart::coe2rv_reference_sun_sync_elliptic()
+{
+    // Reference values provided externally.
+    // Sun-synchronous near-circular orbit: sma=6872.526 km, ecc=0.00135,
+    // inc=97.455 deg, raan=69.1 deg, aop=330 deg, ta=290 deg
+    KeplElems e{6872.526, 0.00135,
+                97.455 * deg_to_rad, 69.1  * deg_to_rad,
+                330.0  * deg_to_rad, 290.0 * deg_to_rad};
+
+    CartState s = coe2rv(e);
+
+    VERIFY_NEAR(s.pos.x,  5955.2903210689792104,  POS_TOL);
+    VERIFY_NEAR(s.pos.y, -3422.1231087080955149,  POS_TOL);
+    VERIFY_NEAR(s.pos.z,  -106.9868679718580040,  POS_TOL);
+    VERIFY_NEAR(s.vel.x,    -0.3989591278997762,  VEL_TOL);
+    VERIFY_NEAR(s.vel.y,    -0.9110530741229865,  VEL_TOL);
+    VERIFY_NEAR(s.vel.z,     7.5540520409130139,  VEL_TOL);
 }
 
 void TstKeplCart::coe2rv_circular_equatorial_invariants()
@@ -151,6 +172,22 @@ void TstKeplCart::rv2coe_reference_circular_inclined()
     // aop forced to 0 by rv2coe for circular orbit
     VERIFY_NEAR(e.aop, 0.0,                ANG_TOL);
     VERIFY_NEAR(e.ta,  0.0,                ANG_TOL);
+}
+
+void TstKeplCart::rv2coe_reference_sun_sync_elliptic()
+{
+    // Inverse of coe2rv_reference_sun_sync_elliptic.
+    Vec3 pos{ 5955.2903210689792104, -3422.1231087080955149, -106.9868679718580040};
+    Vec3 vel{   -0.3989591278997762,    -0.9110530741229865,    7.5540520409130139};
+
+    KeplElems e = rv2coe(pos, vel);
+
+    VERIFY_NEAR(e.sma,  6872.526,            POS_TOL);
+    VERIFY_NEAR(e.ecc,  0.00135,             1e-7);
+    VERIFY_NEAR(e.inc,  97.455 * deg_to_rad, ANG_TOL);
+    VERIFY_NEAR(e.raan,  69.1  * deg_to_rad, ANG_TOL);
+    VERIFY_NEAR(e.aop,  330.0  * deg_to_rad, ANG_TOL);
+    VERIFY_NEAR(e.ta,   290.0  * deg_to_rad, ANG_TOL);
 }
 
 void TstKeplCart::rv2coe_circular_equatorial()
