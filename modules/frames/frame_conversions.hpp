@@ -2,16 +2,12 @@
 #define FRAME_CONVERSIONS_HPP
 
 #include "core/state.hpp"
+#include "core/epoch.hpp"
 
 namespace astrodynamics_lib {
 
-// Converts a Cartesian state from ICRF (ECI) to ITRF (ECEF).
-// utc_jd: epoch as UTC Julian Date.
-CartState icrf_to_itrf(CartState state, double utc_jd);
-
-// Converts a Cartesian state from ITRF (ECEF) to ICRF (ECI).
-// utc_jd: epoch as UTC Julian Date.
-CartState itrf_to_icrf(CartState state, double utc_jd);
+CartState icrf_to_itrf(CartState state, UtcJd epoch);
+CartState itrf_to_icrf(CartState state, UtcJd epoch);
 
 } // namespace astrodynamics_lib
 

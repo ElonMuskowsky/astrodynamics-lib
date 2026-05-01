@@ -6,10 +6,10 @@
 
 namespace astrodynamics_lib {
 
-static void build_rc2t(double utc_jd, double rc2t[3][3])
+static void build_rc2t(UtcJd epoch, double rc2t[3][3])
 {
-    double utc1 = std::floor(utc_jd);
-    double utc2 = utc_jd - utc1;
+    double utc1 = std::floor(epoch.jd);
+    double utc2 = epoch.jd - utc1;
 
     double tai1, tai2;
     iauUtctai(utc1, utc2, &tai1, &tai2);
@@ -19,7 +19,7 @@ static void build_rc2t(double utc_jd, double rc2t[3][3])
 
     int iy, im, id;
     double fd;
-    iauJd2cal(utc_jd, 0.0, &iy, &im, &id, &fd);
+    iauJd2cal(epoch.jd, 0.0, &iy, &im, &id, &fd);
     double nls;
     iauDat(iy, im, id, fd, &nls);
 
@@ -31,10 +31,10 @@ static void build_rc2t(double utc_jd, double rc2t[3][3])
     iauC2t00b(tt1, tt2, ut11, ut12, 0.0, 0.0, rc2t);
 }
 
-CartState icrf_to_itrf(CartState state, double utc_jd)
+CartState icrf_to_itrf(CartState state, UtcJd epoch)
 {
     double rc2t[3][3];
-    build_rc2t(utc_jd, rc2t);
+    build_rc2t(epoch, rc2t);
 
     double r_eci[3] = {state.pos.x, state.pos.y, state.pos.z};
     double v_eci[3] = {state.vel.x, state.vel.y, state.vel.z};
@@ -51,10 +51,10 @@ CartState icrf_to_itrf(CartState state, double utc_jd)
     };
 }
 
-CartState itrf_to_icrf(CartState state, double utc_jd)
+CartState itrf_to_icrf(CartState state, UtcJd epoch)
 {
     double rc2t[3][3];
-    build_rc2t(utc_jd, rc2t);
+    build_rc2t(epoch, rc2t);
 
     double r_ecef[3] = {state.pos.x, state.pos.y, state.pos.z};
     double v_ecef[3] = {state.vel.x, state.vel.y, state.vel.z};
