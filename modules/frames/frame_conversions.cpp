@@ -1,0 +1,78 @@
+#include "frames/frame_conversions.hpp"
+
+#include <cmath>
+#include "core/constants.hpp"
+#include "sofa.h"
+
+namespace astrodynamics_lib {
+
+static void build_rc2t(double utc_jd, double rc2t[3][3])
+{
+    double utc1 = std::floor(utc_jd);
+    double utc2 = utc_jd - utc1;
+
+    double tai1, tai2;
+    iauUtctai(utc1, utc2, &tai1, &tai2);
+
+    double tt1, tt2;
+    iauTaitt(tai1, tai2, &tt1, &tt2);
+
+    int iy, im, id;
+    double fd;
+    iauJd2cal(utc_jd, 0.0, &iy, &im, &id, &fd);
+    double nls;
+    iauDat(iy, im, id, fd, &nls);
+
+    // EOP zeroed — no table lookup
+    double dut1 = 0.0;
+    double ut11, ut12;
+    iauTaiut1(tai1, tai2, dut1 - nls, &ut11, &ut12);
+
+    iauC2t00b(tt1, tt2, ut11, ut12, 0.0, 0.0, rc2t);
+}
+
+CartState icrf_to_itrf(CartState state, double utc_jd)
+{
+    double rc2t[3][3];
+    build_rc2t(utc_jd, rc2t);
+
+    double r_eci[3] = {state.pos.x, state.pos.y, state.pos.z};
+    double v_eci[3] = {state.vel.x, state.vel.y, state.vel.z};
+
+    double r_ecef[3], v_rot[3];
+    iauRxp(rc2t, r_eci, r_ecef);
+    iauRxp(rc2t, v_eci, v_rot);
+
+    return CartState{
+        {r_ecef[0], r_ecef[1], r_ecef[2]},
+        {v_rot[0] + omega_earth * r_ecef[1],
+         v_rot[1] - omega_earth * r_ecef[0],
+         v_rot[2]}
+    };
+}
+
+CartState itrf_to_icrf(CartState state, double utc_jd)
+{
+    double rc2t[3][3];
+    build_rc2t(utc_jd, rc2t);
+
+    double r_ecef[3] = {state.pos.x, state.pos.y, state.pos.z};
+    double v_ecef[3] = {state.vel.x, state.vel.y, state.vel.z};
+
+    double v_corr[3] = {
+        v_ecef[0] - omega_earth * r_ecef[1],
+        v_ecef[1] + omega_earth * r_ecef[0],
+        v_ecef[2]
+    };
+
+    double r_eci[3], v_eci[3];
+    iauTrxp(rc2t, r_ecef, r_eci);
+    iauTrxp(rc2t, v_corr, v_eci);
+
+    return CartState{
+        {r_eci[0], r_eci[1], r_eci[2]},
+        {v_eci[0], v_eci[1], v_eci[2]}
+    };
+}
+
+} // namespace astrodynamics_lib

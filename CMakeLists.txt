@@ -5,15 +5,18 @@ project(astrodynamics-lib LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_subdirectory(third_party/sofa_c)
+
 add_subdirectory(modules/core)
 add_subdirectory(modules/orbital)
+add_subdirectory(modules/frames)
 
 enable_testing()
 add_subdirectory(tests)
 
 add_executable(astrodynamics-lib main.cpp)
 
-target_link_libraries(astrodynamics-lib PRIVATE core orbital)
+target_link_libraries(astrodynamics-lib PRIVATE core orbital frames)
 
 include(GNUInstallDirs)
 install(TARGETS astrodynamics-lib
