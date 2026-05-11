@@ -72,6 +72,55 @@ CartState itrf_to_icrf(const CartState& state, UtcJd epoch) {
     };
 }
 
+static void build_rbpn(UtcJd epoch, double rbpn[3][3]) {
+    double utc1 = std::floor(epoch.jd);
+    double utc2 = epoch.jd - utc1;
+
+    double tai1, tai2;
+    iauUtctai(utc1, utc2, &tai1, &tai2);
+
+    double tt1, tt2;
+    iauTaitt(tai1, tai2, &tt1, &tt2);
+
+    // IAU 2000B: frame bias + precession + nutation → GCRS-to-TOD matrix
+    double dpsi, deps, epsa, rb[3][3], rp[3][3], rbp[3][3], rn[3][3];
+    iauPn00b(tt1, tt2, &dpsi, &deps, &epsa, rb, rp, rbp, rn, rbpn);
+}
+
+CartState icrf_to_tod(const CartState& state, UtcJd epoch) {
+    double rbpn[3][3];
+    build_rbpn(epoch, rbpn);
+
+    double r_icrf[3] = {state.pos.x, state.pos.y, state.pos.z};
+    double v_icrf[3] = {state.vel.x, state.vel.y, state.vel.z};
+
+    double r_tod[3], v_tod[3];
+    iauRxp(rbpn, r_icrf, r_tod);
+    iauRxp(rbpn, v_icrf, v_tod);
+
+    return CartState{
+        {r_tod[0], r_tod[1], r_tod[2]},
+        {v_tod[0], v_tod[1], v_tod[2]}
+    };
+}
+
+CartState tod_to_icrf(const CartState& state, UtcJd epoch) {
+    double rbpn[3][3];
+    build_rbpn(epoch, rbpn);
+
+    double r_tod[3] = {state.pos.x, state.pos.y, state.pos.z};
+    double v_tod[3] = {state.vel.x, state.vel.y, state.vel.z};
+
+    double r_icrf[3], v_icrf[3];
+    iauTrxp(rbpn, r_tod, r_icrf);
+    iauTrxp(rbpn, v_tod, v_icrf);
+
+    return CartState{
+        {r_icrf[0], r_icrf[1], r_icrf[2]},
+        {v_icrf[0], v_icrf[1], v_icrf[2]}
+    };
+}
+
 static void build_rt2t(UtcJd epoch, double rt2t[3][3]) {
     double utc1 = std::floor(epoch.jd);
     double utc2 = epoch.jd - utc1;
@@ -89,8 +138,9 @@ static void build_rt2t(UtcJd epoch, double rt2t[3][3]) {
     iauDat(iy, im, id, fd, &nls);
 
     // EOP zeroed — no table lookup
+    double dut1 = 0.0;
     double ut11, ut12;
-    iauTaiut1(tai1, tai2, -nls, &ut11, &ut12);
+    iauTaiut1(tai1, tai2, dut1 - nls, &ut11, &ut12);
 
     double gast = iauGst00b(ut11, ut12);
 
