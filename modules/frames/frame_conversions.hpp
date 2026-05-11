@@ -12,6 +12,12 @@ CartState icrf_to_itrf(CartState state, UtcJd epoch);
 // Uses SOFA iauC2t00b (IAU 2000B, ~1 mas). EOP pole offsets and dUT1 zeroed.
 CartState itrf_to_icrf(CartState state, UtcJd epoch);
 
+// Uses SOFA iauGst00b + iauPom00 (IAU 2000B). EOP pole offsets and dUT1 zeroed.
+CartState tod_to_itrf(CartState state, UtcJd epoch);
+
+// Uses SOFA iauGst00b + iauPom00 (IAU 2000B). EOP pole offsets and dUT1 zeroed.
+CartState itrf_to_tod(CartState state, UtcJd epoch);
+
 } // namespace astrodynamics_lib
 
 #endif // FRAME_CONVERSIONS_HPP
