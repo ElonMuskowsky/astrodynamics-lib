@@ -16,7 +16,7 @@ static constexpr double VEL_TOL_RT = 1e-12;  // km/s           — round-trips
 
 TEST(FrameConversions, icrf_to_itrf_reference_leo)
 {
-    // SSO ~500 km. Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
+    // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
     CartState eci{{5459.2396713670341342, -3527.2148870837145296, 2214.7311273388722839},
                    {-2.6136887550416064, 0.4567270970933447, 7.1456293866401950}};
     UtcJd epoch{2460676.5};
@@ -49,7 +49,7 @@ TEST(FrameConversions, icrf_to_itrf_position_magnitude_preserved)
 
 TEST(FrameConversions, itrf_to_icrf_reference_leo)
 {
-    // LEO ~200 km. Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
+    // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
     CartState ecef{{-5344.8007498102224417, -974.8552535676452635, -3706.3868933148032738},
                     {-1.3992290458120542, -6.3277729610962936, 3.6984098055584855}};
     UtcJd epoch{2460676.5};
@@ -70,7 +70,7 @@ TEST(FrameConversions, itrf_to_icrf_reference_leo)
 
 TEST(FrameConversions, roundtrip_icrf_itrf_icrf)
 {
-    // SSO ~500 km. Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
+    // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
     CartState orig{{5459.2396713670341342, -3527.2148870837145296, 2214.7311273388722839},
                    {-2.6136887550416064, 0.4567270970933447, 7.1456293866401950}};
     UtcJd epoch{2460676.5};
@@ -87,7 +87,7 @@ TEST(FrameConversions, roundtrip_icrf_itrf_icrf)
 
 TEST(FrameConversions, roundtrip_itrf_icrf_itrf)
 {
-    // LEO ~200 km. Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
+    // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
     CartState orig{{-5344.8007498102224417, -974.8552535676452635, -3706.3868933148032738},
                     {-1.3992290458120542, -6.3277729610962936, 3.6984098055584855}};
     UtcJd epoch{2451545.0};  // J2000
@@ -140,19 +140,18 @@ TEST(FrameConversions, tod_to_itrf_position_magnitude_preserved)
 
 TEST(FrameConversions, itrf_to_tod_reference_leo)
 {
-    // TODO: replace dummy expected values with externally verified reference.
     // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
-    CartState ecef{{4200.0, 5100.0, 2900.0}, {-5.3, 3.8, -3.1}};
+    CartState ecef{{-4468.6325575361288429 , -4713.5451335403558915, 2227.8671314291568706}, {0.5880513773790095, 2.8283696437618140, 7.1392737686073833}};
     UtcJd epoch{2460676.5};
 
     CartState tod = itrf_to_tod(ecef, epoch);
 
-    EXPECT_NEAR(tod.pos.x, 0.0, POS_TOL);  // TODO
-    EXPECT_NEAR(tod.pos.y, 0.0, POS_TOL);  // TODO
-    EXPECT_NEAR(tod.pos.z, 0.0, POS_TOL);  // TODO
-    EXPECT_NEAR(tod.vel.x, 0.0, VEL_TOL);  // TODO
-    EXPECT_NEAR(tod.vel.y, 0.0, VEL_TOL);  // TODO
-    EXPECT_NEAR(tod.vel.z, 0.0, VEL_TOL);  // TODO
+    EXPECT_NEAR(tod.pos.x, 5473.4814187764477538, POS_TOL);
+    EXPECT_NEAR(tod.pos.y, -3496.7393123455503883, POS_TOL);
+    EXPECT_NEAR(tod.pos.z, 2227.8671314291568706, POS_TOL);
+    EXPECT_NEAR(tod.vel.x, -2.6335535085359663, VEL_TOL);
+    EXPECT_NEAR(tod.vel.y, 0.4417622156983927, VEL_TOL);
+    EXPECT_NEAR(tod.vel.z, 7.1392737686073833, VEL_TOL);
 }
 
 // ============================================================
@@ -180,6 +179,96 @@ TEST(FrameConversions, roundtrip_itrf_tod_itrf)
     UtcJd epoch{2451545.0};  // J2000
 
     CartState back = tod_to_itrf(itrf_to_tod(orig, epoch), epoch);
+
+    EXPECT_NEAR(back.pos.x, orig.pos.x, POS_TOL_RT);
+    EXPECT_NEAR(back.pos.y, orig.pos.y, POS_TOL_RT);
+    EXPECT_NEAR(back.pos.z, orig.pos.z, POS_TOL_RT);
+    EXPECT_NEAR(back.vel.x, orig.vel.x, VEL_TOL_RT);
+    EXPECT_NEAR(back.vel.y, orig.vel.y, VEL_TOL_RT);
+    EXPECT_NEAR(back.vel.z, orig.vel.z, VEL_TOL_RT);
+}
+
+// ============================================================
+// icrf_to_tod
+// ============================================================
+
+TEST(FrameConversions, icrf_to_tod_reference_leo)
+{
+    // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
+    CartState eci{{5459.2396713670341342, -3527.2148870837145296, 2214.7311273388722839},
+                  {-2.6136887550416064, 0.4567270970933447, 7.1456293866401950}};
+    UtcJd epoch{2460676.5};
+
+    CartState tod = icrf_to_tod(eci, epoch);
+
+    EXPECT_NEAR(tod.pos.x, 5473.4814187764477538, POS_TOL);
+    EXPECT_NEAR(tod.pos.y, -3496.7393123455503883, POS_TOL);
+    EXPECT_NEAR(tod.pos.z, 2227.8671314291568706, POS_TOL);
+    EXPECT_NEAR(tod.vel.x, -2.6335535085359663, VEL_TOL);
+    EXPECT_NEAR(tod.vel.y, 0.4417622156983927, VEL_TOL);
+    EXPECT_NEAR(tod.vel.z, 7.1392737686073833, VEL_TOL);
+}
+
+TEST(FrameConversions, icrf_to_tod_position_magnitude_preserved)
+{
+    // Pure rotation — position magnitude must be invariant.
+    CartState eci{{5459.2396713670341342, -3527.2148870837145296, 2214.7311273388722839},
+                  {-2.6136887550416064, 0.4567270970933447, 7.1456293866401950}};
+    UtcJd epoch{2460676.5};
+
+    CartState tod = icrf_to_tod(eci, epoch);
+
+    EXPECT_NEAR(norm(tod.pos), norm(eci.pos), 1e-9);
+}
+
+// ============================================================
+// tod_to_icrf
+// ============================================================
+
+TEST(FrameConversions, tod_to_icrf_reference_leo)
+{
+    // Epoch: 2025-01-01 00:00:00 UTC (JD 2460676.5)
+    CartState tod{{5473.4814187764477538, -3496.7393123455503883, 2227.8671314291568706},
+                  {-2.6335535085359663, 0.4417622156983927, 7.1392737686073833}};
+    UtcJd epoch{2460676.5};
+
+    CartState eci = tod_to_icrf(tod, epoch);
+
+    EXPECT_NEAR(eci.pos.x, 5459.2396713639827794, POS_TOL);
+    EXPECT_NEAR(eci.pos.y, -3527.2148870831865679, POS_TOL);
+    EXPECT_NEAR(eci.pos.z, 2214.7311273472118955, POS_TOL);
+    EXPECT_NEAR(eci.vel.x, -2.6136887550494552, VEL_TOL);
+    EXPECT_NEAR(eci.vel.y, 0.4567270970984216, VEL_TOL);
+    EXPECT_NEAR(eci.vel.z, 7.1456293866370082, VEL_TOL);
+}
+
+// ============================================================
+// Round-trips: ICRF <-> TOD
+// ============================================================
+
+TEST(FrameConversions, roundtrip_icrf_tod_icrf)
+{
+    CartState orig{{5459.2396713670341342, -3527.2148870837145296, 2214.7311273388722839},
+                   {-2.6136887550416064, 0.4567270970933447, 7.1456293866401950}};
+    UtcJd epoch{2460676.5};
+
+    CartState back = tod_to_icrf(icrf_to_tod(orig, epoch), epoch);
+
+    EXPECT_NEAR(back.pos.x, orig.pos.x, POS_TOL_RT);
+    EXPECT_NEAR(back.pos.y, orig.pos.y, POS_TOL_RT);
+    EXPECT_NEAR(back.pos.z, orig.pos.z, POS_TOL_RT);
+    EXPECT_NEAR(back.vel.x, orig.vel.x, VEL_TOL_RT);
+    EXPECT_NEAR(back.vel.y, orig.vel.y, VEL_TOL_RT);
+    EXPECT_NEAR(back.vel.z, orig.vel.z, VEL_TOL_RT);
+}
+
+TEST(FrameConversions, roundtrip_tod_icrf_tod)
+{
+    CartState orig{{5473.4814187764450253, -3496.7393123455508430, 2227.8671314291636918},
+                   {-2.6335535085359751, 0.4417622156983962, 7.1392737686073797}};
+    UtcJd epoch{2451545.0};  // J2000
+
+    CartState back = icrf_to_tod(tod_to_icrf(orig, epoch), epoch);
 
     EXPECT_NEAR(back.pos.x, orig.pos.x, POS_TOL_RT);
     EXPECT_NEAR(back.pos.y, orig.pos.y, POS_TOL_RT);
