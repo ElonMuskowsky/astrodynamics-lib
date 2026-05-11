@@ -19,9 +19,9 @@ inline Vec3 operator/(Vec3 a, double s) { return {a.x/s, a.y/s, a.z/s}; }
 
 // --- Vec3 functions ---
 
-inline double dot(Vec3 a, Vec3 b)   { return a.x*b.x + a.y*b.y + a.z*b.z; }
-inline double norm(Vec3 a)          { return std::sqrt(dot(a, a)); }
-inline Vec3   cross(Vec3 a, Vec3 b) {
+inline double dot(const Vec3& a, const Vec3& b)   { return a.x*b.x + a.y*b.y + a.z*b.z; }
+inline double norm(const Vec3& a)                 { return std::sqrt(dot(a, a)); }
+inline Vec3   cross(const Vec3& a, const Vec3& b) {
     return {
         a.y*b.z - a.z*b.y,
         a.z*b.x - a.x*b.z,

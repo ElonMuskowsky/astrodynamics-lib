@@ -30,7 +30,7 @@ static void build_rc2t(UtcJd epoch, double rc2t[3][3]) {
     iauC2t00b(tt1, tt2, ut11, ut12, 0.0, 0.0, rc2t);
 }
 
-CartState icrf_to_itrf(CartState state, UtcJd epoch) {
+CartState icrf_to_itrf(const CartState& state, UtcJd epoch) {
     double rc2t[3][3];
     build_rc2t(epoch, rc2t);
 
@@ -49,7 +49,7 @@ CartState icrf_to_itrf(CartState state, UtcJd epoch) {
     };
 }
 
-CartState itrf_to_icrf(CartState state, UtcJd epoch) {
+CartState itrf_to_icrf(const CartState& state, UtcJd epoch) {
     double rc2t[3][3];
     build_rc2t(epoch, rc2t);
 
@@ -103,7 +103,7 @@ static void build_rt2t(UtcJd epoch, double rt2t[3][3]) {
     iauC2teqx(rbpn_id, gast, rpom, rt2t);
 }
 
-CartState tod_to_itrf(CartState state, UtcJd epoch) {
+CartState tod_to_itrf(const CartState& state, UtcJd epoch) {
     double rt2t[3][3];
     build_rt2t(epoch, rt2t);
 
@@ -122,7 +122,7 @@ CartState tod_to_itrf(CartState state, UtcJd epoch) {
     };
 }
 
-CartState itrf_to_tod(CartState state, UtcJd epoch) {
+CartState itrf_to_tod(const CartState& state, UtcJd epoch) {
     double rt2t[3][3];
     build_rt2t(epoch, rt2t);
 

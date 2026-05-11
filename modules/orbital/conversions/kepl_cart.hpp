@@ -20,7 +20,7 @@ struct KeplElems {
 };
 
 // Reference: Vallado (2013), Algorithm 10 (COE2RV)
-inline CartState coe2rv(KeplElems e)
+inline CartState coe2rv(const KeplElems& e)
 {
     if (std::fabs(e.sma * (1.0 - e.ecc)) < 0.001)
         throw std::runtime_error("coe2rv: periapsis < 0.001 km");
@@ -68,7 +68,7 @@ inline CartState coe2rv(KeplElems e)
 }
 
 // Reference: Vallado (2013), Algorithm 9 (RV2COE)
-inline KeplElems rv2coe(Vec3 pos, Vec3 vel)
+inline KeplElems rv2coe(const Vec3& pos, const Vec3& vel)
 {
     double r_mag = norm(pos);
     double v_mag = norm(vel);
