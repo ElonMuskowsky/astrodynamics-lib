@@ -1,9 +1,14 @@
-find_package(Qt6 REQUIRED COMPONENTS Test)
+include(FetchContent)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.tar.gz
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
 
-set(CMAKE_AUTOMOC ON)
+add_executable(tst_kepl_cart tst_kepl_cart.cpp)
+target_link_libraries(tst_kepl_cart PRIVATE GTest::gtest_main orbital)
 
-qt_add_executable(tst_kepl_cart tst_kepl_cart.cpp)
-
-target_link_libraries(tst_kepl_cart PRIVATE Qt6::Test orbital)
-
-add_test(NAME tst_kepl_cart COMMAND tst_kepl_cart)
+include(GoogleTest)
+gtest_discover_tests(tst_kepl_cart)
